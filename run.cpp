@@ -1,3 +1,5 @@
+// Script for easy recompilation and run or main driver file
+
 # include <fstream>
 
 int main() {

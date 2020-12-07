@@ -26,17 +26,17 @@ struct treeNode {
 
 class Tree {
 	private:
-		treeNode* root;
+		treeNode* root = nullptr;
 		void printInOrder(treeNode*);
 	public:
 		Tree();
 		Tree(string,int); // loads in a file of words
-		treeNode* search(string);
-		void insert(string);
-		void remove(string);
-		void printInOrder();
-		void removeAll();
-		double searchAll();
+		treeNode* search(string); // iterative search
+		void insert(string); // iterative insert
+		void remove(string); // iterative remove
+		void printInOrder(); // recursive print in order
+		double removeAll(); // returns the run time of removing all elements from BST
+		double searchAll(); // returns the run time of searching all elements from BST
 };
 
 # endif

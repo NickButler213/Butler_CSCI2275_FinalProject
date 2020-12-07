@@ -11,6 +11,8 @@ List::List() {
 	maxLevel = 0;
 }
 
+// reads in a file, size is the number of words you wish to read
+// the file bigData.txt has a maximum of 1,000,000 words in it
 List::List(string fileName, int size) {
 	head = new listNode;
 	maxLevel = 0;
@@ -22,8 +24,11 @@ List::List(string fileName, int size) {
 	string word;
 	for (int i = 0; i < size and file >> word; i++)
 		insert(word);
+	file.close();
 }
 
+// this is the "coin flip".  It determines the height
+// that a new node will be inserted at
 int List::levelGenerator() {
 	int l{};
 	while (random()%2)
@@ -31,6 +36,8 @@ int List::levelGenerator() {
 	return l;
 }
 
+// simple search function.  Pushes right through the list
+// as much as possible before having to drop down a level
 listNode* List::search(string key) {
 	listNode* node = head;
 	while (node) {
@@ -47,6 +54,8 @@ listNode* List::search(string key) {
 	return nullptr;
 }
 
+// This is the most complication function it is broken into parts
+// for ease of understanding
 void List::insert(string key) {
 	// If the node already exists adjust the count throught the levels
 	listNode* node = search(key);
@@ -57,8 +66,9 @@ void List::insert(string key) {
 		}
 		return;
 	}
+
 	int l = levelGenerator(); // get random level
-	// adjust height is necessary
+	// adjust height of list if new node will be higher than current max level
 	if (l > maxLevel) {
 		listNode* newHead = new listNode;
 		node = newHead;
@@ -109,7 +119,8 @@ void List::insert(string key) {
 	}
 }
 
-
+// works similar to search where the function push as much as
+// it can before it drops down a level
 void List::remove(string key) {
 	listNode* node = search(key);
 	while (node) {
@@ -122,6 +133,7 @@ void List::remove(string key) {
 	}
 }
 
+//prints by dropping to level 0 then reading node by node
 void List::printInOrder() {
 	listNode* node = head;
 	while (node->below)
@@ -133,18 +145,27 @@ void List::printInOrder() {
 	}
 }
 
-void List::removeAll() {
+// stores all keys in a vector, then removes them all using the
+// remove function.
+// Returns the time in milliseconds of run time
+double List::removeAll() {
+	vector<string> keys;
 	listNode* node = head;
 	while (node->below)
 		node = node->below;
-	node = node->next;
-	while (node) {
-		listNode* delNode = node;
+	while (node->next) {
 		node = node->next;
-		remove(delNode->key);
+		keys.push_back(node->key);
 	}
+	clock_t start = clock();
+	for (string key : keys)
+		remove(key);
+	return double(clock()-start)/CLOCKS_PER_SEC*1000; // time in ms
 }
 
+// stores all keys in a vector, then search them all using the
+// search function.
+// Returns the time in milliseconds of run time
 double List::searchAll() {
 	vector<string> keys;
 	listNode* node = head;
@@ -157,9 +178,10 @@ double List::searchAll() {
 	clock_t start = clock();
 	for (string key : keys)
 		search(key);
-	return (clock()-start)*1000./CLOCKS_PER_SEC; // time in ms
+	return double(clock()-start)/CLOCKS_PER_SEC*1000; // time in ms
 }
 
+// used for the failure simulation
 bool probability(double prob) {
 	double randNum = (double) rand()/RAND_MAX;
 	if (randNum <= prob)
@@ -167,6 +189,8 @@ bool probability(double prob) {
 	return false;
 }
 
+// determines if by starting at the head, the last node can be recoved
+// this is a DFS and it skip around node where failed == true
 bool List::isConnected() {
 	listNode* node = head;
 	while (node->below)
@@ -204,20 +228,11 @@ bool List::isConnected() {
 	return false;
 }
 
-int List::countFailed() {
-	int count{};
-	for (listNode* level = head; level->below; level = level->below) {
-	        listNode* node = level->next;
-	        while (node) {
-	                if (node->failed)
-	                        count++;
-	                node = node->next;
-	        }
-	}
-	return count;
-}
-
+// simulate failure of multiple node in the skip list
+// parameter is a double between 0 and 1 which gives the
+// probability than any given node will fail
 bool List::failSim(double prob) {
+	// Step 1: choose which nodes to have fail
 	for (listNode* level = head; level->below; level = level->below) {
 		listNode* node = level->next;
 		while (node) {
@@ -226,7 +241,10 @@ bool List::failSim(double prob) {
 			node = node->next;
 		}
 	}
+	// Step 2: see if the list head is still connected to the
+	// last node
 	bool connected = isConnected();
+	// Step 3: reset nodes to not failed
 	for (listNode* level = head; level; level = level->below) {
 		listNode* node = level;
 		while (node) {
@@ -237,6 +255,8 @@ bool List::failSim(double prob) {
 	return connected;
 }
 
+// used to see the functionality of the skiplist
+// inly use this on small data sets
 void List::printPretty() {
 	listNode* row = head;
 	for (int i = maxLevel; i >= 0; i--) {

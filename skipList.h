@@ -8,9 +8,8 @@ struct listNode {
 	listNode* next = nullptr;
 	listNode* below = nullptr;
 	listNode* above = nullptr;
-	bool visited = false;
 	bool failed = false;
-	listNode() {}
+	listNode(){}
 	listNode(string sKey) {
 		key = sKey;
 		count = 1;
@@ -19,21 +18,19 @@ struct listNode {
 
 class List {
 	private:
-		listNode* head;
+		listNode* head = nullptr;
 		int maxLevel{};
 	public:
 		List();
-		List(string,int);
-		int levelGenerator();
+		List(string,int); // reads in a file calls insert(string)
+		int levelGenerator(); // generates a random level to insert a new node
 		listNode* search(string);
-		double searchAll();
+		double searchAll(); // returns run time for searching all nodes
 		void insert(string);
 		void remove(string);
 		void printInOrder();
-		void removeAll();
-		bool isConnected();
-		bool failSim(double);
-		void printPretty();
-
-		int countFailed();
+		double removeAll(); // returns run time for removing all nodes
+		bool isConnected(); // returns true is the head of the list can access the last node
+		bool failSim(double); // simulates mass failure of nodes
+		void printPretty(); // used for showing the functionality of skip lists on small data sets
 };

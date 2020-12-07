@@ -10,7 +10,8 @@ using namespace std;
 Tree::Tree() {
 	root = nullptr;
 }
-
+// reads in a file, size is the number of words you wish to read
+// the file bigData.txt has a maximum of 1,000,000 words in it
 Tree::Tree(string fileName, int size) {
 	root = nullptr;
 	ifstream file(fileName);
@@ -21,8 +22,10 @@ Tree::Tree(string fileName, int size) {
 		for (int i = 0; i < size and file >> word; i++)
 			insert(word);
 	}
+	file.close();
 }
 
+// iterative insert into BST
 void Tree::insert(string key) {
 	treeNode* node = root;
 	treeNode* newNode = new treeNode(key);
@@ -54,6 +57,7 @@ void Tree::insert(string key) {
 	}
 }
 
+// iterative search of BST
 treeNode* Tree::search(string key) {
 	treeNode* node = root;
 	while (node) {
@@ -67,6 +71,7 @@ treeNode* Tree::search(string key) {
 	return nullptr;
 }
 
+// iterative removal of node from BST
 void Tree::remove(string key) {
 	treeNode* node = search(key);
 	if (!node)
@@ -132,11 +137,13 @@ void Tree::remove(string key) {
 	}
 }
 
+// recursive public print function
 void Tree::printInOrder() {
 	if (root)
 		printInOrder(root);
 }
 
+// recursive private print function
 void Tree::printInOrder(treeNode* node) {
 	if (node->left)
 		printInOrder(node->left);
@@ -145,15 +152,30 @@ void Tree::printInOrder(treeNode* node) {
 		printInOrder(node->right);
 }
 
-void Tree::removeAll() {
-	while (root) {
-		printInOrder();
-		cout << endl;
-		remove(root->key);
+// removes all nodes from BST and returns the run time
+double Tree::removeAll() {
+	vector<string> keys;
+	stack<treeNode*> s;
+	if (!root) return 0;
+	treeNode* node = root;
+	s.push(node);
+	while (!s.empty()) {
+		node = s.top();
+		s.pop();
+		keys.push_back(node->key);
+		if (node->left)
+			s.push(node->left);
+		if (node->right)
+			s.push(node->right);
+
 	}
-	printInOrder();
+	clock_t start = clock();
+	while (root)
+		remove(root->key);
+	return double(clock()-start)/CLOCKS_PER_SEC*1000; // in ms
 }
 
+// searches for all keys in BST and returns the run time
 double Tree::searchAll() {
 	vector<string> keys;
 	stack<treeNode*> s;
@@ -173,5 +195,5 @@ double Tree::searchAll() {
 	clock_t start = clock();
 	for (string key : keys)
 		search(key);
-	return (clock()-start)/1000.*CLOCKS_PER_SEC; // time in ms
+	return double(clock()-start)/CLOCKS_PER_SEC*1000; // time in ms
 }
