@@ -31,7 +31,7 @@ List::List(string fileName, int size) {
 // that a new node will be inserted at
 int List::levelGenerator() {
 	int l{};
-	while (random()%2)
+	while (rand()%2)
 		l++;
 	return l;
 }

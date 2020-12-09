@@ -1,6 +1,7 @@
 # include "Tree.h"
 # include "skipList.h"
 # include <iostream>
+# include <ctime>
 using namespace std;
 
 int main() {
