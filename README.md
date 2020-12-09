@@ -42,3 +42,8 @@ or just compile and run the run.cpp file
 the test.cpp if run in the same way as driver.cpp
 $ g++ -std=c++11 test.cpp Tree.cpp skipList.cpp -o test
 $ ./test
+
+This code was built and tested in both linux and windows. Since, mac is BSD5
+like linux, this code should run smoothly on mac.  (There ar no third party dependencies)
+
+The project is full created by Nick Butler
